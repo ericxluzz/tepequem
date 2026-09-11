@@ -170,12 +170,7 @@ export default function App() {
         style={{ background: 'var(--panel)', borderColor: 'var(--line)' }}
       >
         <div className="mb-3 flex items-center gap-2.5 border-b pb-3.5" style={{ borderColor: 'var(--line2)' }}>
-          <svg width={30} height={30} viewBox="0 0 40 40" className="flex-none">
-            <path d="M6 6h28v13.5L20 35 6 19.5z" fill="var(--accent)" />
-            <path d="M10 10h20v8.8L20 29.6 10 18.8z" fill="var(--panel)" />
-            <path d="M14.4 14.2h11.2v2.4H14.4z" fill="var(--accent)" />
-            <path d="M17.6 18.6h4.8v7h-4.8z" fill="var(--accent)" />
-          </svg>
+          <img src="/icon-192.png" width={32} height={32} alt="" className="flex-none rounded-lg" />
           <div className="flex flex-col leading-tight">
             <span className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>TEPEQUÉM UP</span>
             <span className="text-[11px]" style={{ color: 'var(--ink3)' }}>Checagem 2026</span>
