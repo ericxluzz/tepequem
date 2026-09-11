@@ -7,6 +7,7 @@ import type { useSync } from '../hooks/useSync'
 import { shortCategoria } from '../lib/status'
 import { buildOfficialReport } from '../lib/officialReport'
 import { generateReport, openPrintReport } from '../lib/export'
+import { ListagemOficialSheet } from '../components/ListagemOficialSheet'
 
 interface PainelPageProps {
   stats: Stats
@@ -21,6 +22,7 @@ const RING_C = 2 * Math.PI * RING_R
 export function PainelPage({ stats, athletes, onNavigate, sync }: PainelPageProps) {
   const [lancarMsg, setLancarMsg] = useState('')
   const [exportMsg, setExportMsg] = useState('')
+  const [verListagem, setVerListagem] = useState(false)
   const oficialAtivo = sync.isSupabaseConfigured && sync.rawEvents !== null
   const oficial = oficialAtivo ? buildOfficialReport(athletes, sync.rawEvents!) : null
   const { total, validos, invalidos, pendentes, checados, pct } = stats
@@ -149,6 +151,15 @@ export function PainelPage({ stats, athletes, onNavigate, sync }: PainelPageProp
             <span className="text-[12.5px]" style={{ color: 'var(--ink3)' }}>Ainda sem dados de outros aparelhos — lance o histórico ou aguarde a conexão.</span>
           )}
 
+          <button
+            onClick={() => setVerListagem(true)}
+            disabled={!oficial}
+            className="h-[46px] rounded-[11px] border text-[13.5px] font-medium disabled:opacity-50"
+            style={{ borderColor: 'var(--accentLine)', background: 'var(--panel)', color: 'var(--accent)' }}
+          >
+            Ver listagem completa
+          </button>
+
           <div className="grid grid-cols-2 gap-2.5">
             <button
               onClick={async () => {
@@ -187,6 +198,10 @@ export function PainelPage({ stats, athletes, onNavigate, sync }: PainelPageProp
           {exportMsg && <span className="text-xs" style={{ color: 'var(--ink2)' }}>{exportMsg}</span>}
           <span className="text-[11px]" style={{ color: 'var(--ink3)' }}>A listagem principal é só leitura — não muda o que aparece no seu aparelho</span>
         </div>
+      )}
+
+      {verListagem && oficial && (
+        <ListagemOficialSheet atletas={oficial.atletas} onClose={() => setVerListagem(false)} />
       )}
 
       {/* Avanço por modalidade */}

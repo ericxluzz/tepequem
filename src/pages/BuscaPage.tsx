@@ -100,7 +100,8 @@ export function BuscaPage({ athletes, filtros, onFiltrosChange, onAbrirFiltros, 
           <input
             value={filtros.query}
             onChange={e => setQuery(e.target.value)}
-            placeholder="Buscar por nome ou número de peito"
+            placeholder="Número de peito ou nome"
+            inputMode="numeric"
             className="h-full min-w-0 flex-1 border-0 bg-transparent text-[15px] outline-none"
             style={{ color: 'var(--ink)' }}
           />

@@ -137,6 +137,7 @@ export default function App() {
     await zerarTudo(operador)
     setModal(null)
     showToast('Checagens zeradas.', 'erro')
+    if (sync.isSupabaseConfigured) sync.syncNow()
   }
 
   const checados = stats.checados
