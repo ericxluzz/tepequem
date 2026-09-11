@@ -17,6 +17,7 @@ import { RefazerDialog } from './components/RefazerDialog'
 import { ZerarDialog } from './components/ZerarDialog'
 import { FeedbackOverlay, type FeedbackData } from './components/FeedbackOverlay'
 import { Toast, type ToastTipo } from './components/Toast'
+import { InstallBanner } from './components/InstallBanner'
 
 export type Screen = 'painel' | 'busca' | 'historico' | 'relatorios' | 'config'
 type Modal = 'filtros' | 'ficha' | 'invalidar' | 'refazer' | 'zerar' | null
@@ -256,6 +257,8 @@ export default function App() {
             <span className="flex-none text-[11px] font-medium" style={{ color: 'var(--ink2)' }}>{checados}/{stats.total} · {stats.pct}%</span>
           </div>
         </div>
+
+        <InstallBanner />
 
         {/* Conteúdo */}
         <div className="flex-1 min-w-0 p-3 px-3.5 pb-[calc(84px+env(safe-area-inset-bottom))] min-[900px]:p-0" key={screen}>
