@@ -112,7 +112,7 @@ export function MergeBackupsSheet({ athletes, onClose, onApplied }: MergeBackups
                 </div>
                 <div className="flex flex-col gap-1 rounded-xl border p-3" style={{ borderColor: 'var(--line)', borderTop: '3px solid var(--bad)' }}>
                   <span className="text-[22px] font-semibold leading-none" style={{ color: 'var(--badInk)' }}>{totais.invalidos}</span>
-                  <span className="text-[11px]" style={{ color: 'var(--ink3)' }}>Inválidos</span>
+                  <span className="text-[11px]" style={{ color: 'var(--ink3)' }}>Desclassificados</span>
                 </div>
                 <div className="flex flex-col gap-1 rounded-xl border p-3" style={{ borderColor: 'var(--line)', borderTop: '3px solid var(--ink3)' }}>
                   <span className="text-[22px] font-semibold leading-none" style={{ color: 'var(--ink)' }}>{totais.pendentes}</span>

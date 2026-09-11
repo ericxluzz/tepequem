@@ -9,7 +9,7 @@ export interface StatusStyle {
 
 export function statusStyle(status: AthleteStatus): StatusStyle {
   if (status === 'valido') return { dot: 'var(--ok)', fg: 'var(--okInk)', bg: 'var(--okBg)', label: 'Válido' }
-  if (status === 'invalido') return { dot: 'var(--bad)', fg: 'var(--badInk)', bg: 'var(--badBg)', label: 'Inválido' }
+  if (status === 'invalido') return { dot: 'var(--bad)', fg: 'var(--badInk)', bg: 'var(--badBg)', label: 'Desclassificado' }
   return { dot: 'var(--ink3)', fg: 'var(--ink2)', bg: 'var(--row)', label: 'Pendente' }
 }
 

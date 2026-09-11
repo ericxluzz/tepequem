@@ -105,7 +105,7 @@ export default function App() {
     const record = await invalidar(sel.id, operador)
     setModal(null); setSelId(null)
     setFeedback({
-      tipo: 'erro', titulo: 'Atleta invalidado', nome,
+      tipo: 'erro', titulo: 'Atleta desclassificado', nome,
       detalhe: `#${num} · ${cat}`,
       assinatura: `Registrado por ${record.operador} às ${new Date(record.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`,
     })

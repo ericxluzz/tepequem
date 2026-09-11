@@ -30,7 +30,7 @@ export function PainelPage({ stats, athletes, onNavigate, sync }: PainelPageProp
 
   const kpis = [
     { label: 'Válidos', valor: validos, fg: 'var(--okInk)', bar: 'var(--ok)', status: 'valido' as const },
-    { label: 'Inválidos', valor: invalidos, fg: 'var(--badInk)', bar: 'var(--bad)', status: 'invalido' as const },
+    { label: 'Desclassificados', valor: invalidos, fg: 'var(--badInk)', bar: 'var(--bad)', status: 'invalido' as const },
     { label: 'Pendentes', valor: pendentes, fg: 'var(--ink)', bar: 'var(--ink3)', status: 'pendente' as const },
   ]
 
@@ -77,7 +77,7 @@ export function PainelPage({ stats, athletes, onNavigate, sync }: PainelPageProp
                 <span className="h-1.5 w-1.5 flex-none rounded-full" style={{ background: 'var(--ok)' }} />{validos} válidos
               </span>
               <span className="flex items-center gap-1.5 text-[11.5px]" style={{ color: 'var(--ink2)' }}>
-                <span className="h-1.5 w-1.5 flex-none rounded-full" style={{ background: 'var(--bad)' }} />{invalidos} inválidos
+                <span className="h-1.5 w-1.5 flex-none rounded-full" style={{ background: 'var(--bad)' }} />{invalidos} desclassificados
               </span>
               <span className="flex items-center gap-1.5 text-[11.5px]" style={{ color: 'var(--ink2)' }}>
                 <span className="h-1.5 w-1.5 flex-none rounded-full" style={{ background: 'var(--row)' }} />{pendentes} pendentes
@@ -122,7 +122,7 @@ export function PainelPage({ stats, athletes, onNavigate, sync }: PainelPageProp
                   <span className="h-1.5 w-1.5 flex-none rounded-full" style={{ background: 'var(--ok)' }} />{sync.combinedStats?.validos ?? 0} válidos
                 </span>
                 <span className="flex items-center gap-1.5 text-[12.5px]" style={{ color: 'var(--ink2)' }}>
-                  <span className="h-1.5 w-1.5 flex-none rounded-full" style={{ background: 'var(--bad)' }} />{sync.combinedStats?.invalidos ?? 0} inválidos
+                  <span className="h-1.5 w-1.5 flex-none rounded-full" style={{ background: 'var(--bad)' }} />{sync.combinedStats?.invalidos ?? 0} desclassificados
                 </span>
                 <span className="flex items-center gap-1.5 text-[12.5px]" style={{ color: 'var(--ink2)' }}>
                   {sync.combinedStats?.checados ?? 0} checados no total

@@ -91,7 +91,7 @@ async function buildAthletesSheet(workbook: ExcelJS.Workbook, athletes: Athlete[
   for (const athlete of athletes) {
     const lastCheck = athlete.historico[athlete.historico.length - 1];
     const statusLabel =
-      athlete.status === 'valido' ? 'VÁLIDO' : athlete.status === 'invalido' ? 'INVÁLIDO' : 'PENDENTE';
+      athlete.status === 'valido' ? 'VÁLIDO' : athlete.status === 'invalido' ? 'DESCLASSIFICADO' : 'PENDENTE';
 
     const row = sheet.addRow({
       numero_inscricao: athlete.numero_inscricao,
@@ -165,7 +165,7 @@ async function buildSummarySheet(workbook: ExcelJS.Workbook, athletes: Athlete[]
 
   addDataRow('Total de Inscritos', total, 5);
   addDataRow('✅ Válidos', validos, 6, 'FFD4EDDA');
-  addDataRow('❌ Inválidos', invalidos, 7, 'FFF8D7DA');
+  addDataRow('❌ Desclassificados', invalidos, 7, 'FFF8D7DA');
   addDataRow('⏳ Pendentes', pendentes, 8, 'FFE2E3E5');
 
   // Por categoria
@@ -200,7 +200,7 @@ export function openPrintReport(athletes: Athlete[], options: ReportOptions = DE
     { t: 'UF', v: (a) => a.uf || '', center: true },
   ];
   if (options.incluirContato) cols.push({ t: 'Telefone', v: (a) => a.telefone || '', center: true });
-  cols.push({ t: 'Situação', v: (a) => (a.status === 'valido' ? 'Válido' : a.status === 'invalido' ? 'Inválido' : 'Pendente'), center: true });
+  cols.push({ t: 'Situação', v: (a) => (a.status === 'valido' ? 'Válido' : a.status === 'invalido' ? 'Desclassificado' : 'Pendente'), center: true });
   if (options.incluirObs) cols.push({ t: 'Observação', v: (a) => a.historico[a.historico.length - 1]?.observacao || '' });
   cols.push({ t: 'Operador', v: (a) => a.historico[a.historico.length - 1]?.operador || '', center: true });
 
@@ -230,7 +230,7 @@ export function openPrintReport(athletes: Athlete[], options: ReportOptions = DE
     + 'table.assin td.gap{border:0;width:5%}'
     + '</style></head><body>'
     + `<h1>Tepequém Up 2026 — RELATÓRIO OFICIAL DE CHECAGEM</h1>`
-    + `<p class="sub">Emissão: ${new Date().toLocaleString('pt-BR')} · Total: ${athletes.length} · Válidos: ${validos} · Inválidos: ${invalidos} · Pendentes: ${pendentes}</p>`
+    + `<p class="sub">Emissão: ${new Date().toLocaleString('pt-BR')} · Total: ${athletes.length} · Válidos: ${validos} · Desclassificados: ${invalidos} · Pendentes: ${pendentes}</p>`
     + `<table class="grid"><thead><tr>${th}</tr></thead><tbody>${tr}</tbody></table>`
     + '<p class="rod">Documento gerado eletronicamente pelo sistema de checagem de atletas.</p>'
     + '<table class="assin"><tr><td>Coordenação da checagem</td><td class="gap"></td><td>Responsável técnico</td><td class="gap"></td><td>Organização do evento</td></tr></table>'

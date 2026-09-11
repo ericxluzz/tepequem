@@ -30,7 +30,7 @@ const CHIPS: { key: FiltroStatus; label: string }[] = [
   { key: 'todos', label: 'Todos' },
   { key: 'pendente', label: 'Pendentes' },
   { key: 'valido', label: 'Válidos' },
-  { key: 'invalido', label: 'Inválidos' },
+  { key: 'invalido', label: 'Desclassificados' },
 ]
 
 export function BuscaPage({ athletes, filtros, onFiltrosChange, onAbrirFiltros, filtrosAtivos, onSelect }: BuscaPageProps) {

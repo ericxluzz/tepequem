@@ -57,7 +57,7 @@ export function FichaSheet({ athlete: a, onClose, onConfirmar, onInvalidar, onAb
       {a.status === 'pendente' ? (
         <SheetFooter>
           <button onClick={onInvalidar} className="h-[54px] flex-1 rounded-xl border text-[15px] font-medium" style={{ borderColor: 'var(--badLine)', background: 'var(--panel)', color: 'var(--bad)' }}>
-            Invalidar
+            Desclassificar
           </button>
           <button onClick={onConfirmar} className="h-[54px] flex-[1.5] rounded-xl text-[15px] font-medium text-white" style={{ background: 'var(--ok)' }}>
             Confirmar atleta
@@ -66,7 +66,7 @@ export function FichaSheet({ athlete: a, onClose, onConfirmar, onInvalidar, onAb
       ) : (
         <div className="flex flex-col gap-2.5 border-t px-4.5 py-3 pb-[calc(12px+env(safe-area-inset-bottom))] min-[900px]:pb-3" style={{ borderColor: 'var(--line2)' }}>
           <span className="text-xs" style={{ color: 'var(--ink3)' }}>
-            {(a.status === 'valido' ? 'Confirmado por ' : 'Invalidado por ') + (lastCheck?.operador || '—') + ' às ' + (lastCheck ? new Date(lastCheck.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—')}
+            {(a.status === 'valido' ? 'Confirmado por ' : 'Desclassificado por ') + (lastCheck?.operador || '—') + ' às ' + (lastCheck ? new Date(lastCheck.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—')}
           </span>
           <button onClick={onAbrirRefazer} className="h-12 rounded-xl border text-sm font-medium" style={{ borderColor: 'var(--line)', background: 'var(--panel)', color: 'var(--ink2)' }}>
             Refazer checagem

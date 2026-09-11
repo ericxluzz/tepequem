@@ -29,7 +29,7 @@ export function HistoricoPage({ athletes, onRefazer }: HistoricoPageProps) {
         const hb = b.historico[b.historico.length - 1]?.timestamp || ''
         return hb.localeCompare(ha)
       })
-    return { registros, resumo: `${validos} válidos · ${invalidos} inválidos registrados` }
+    return { registros, resumo: `${validos} válidos · ${invalidos} desclassificados registrados` }
   }, [athletes, q])
 
   return (
