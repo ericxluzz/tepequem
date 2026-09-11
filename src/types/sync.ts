@@ -46,6 +46,11 @@ export function mergeEvents(events: CheckinEvent[]): Map<string, CheckinEvent> {
  * status entre eles. Assim, se dois aparelhos discordaram no passado mas
  * hoje concordam (ex.: os dois zeraram/confirmaram por último), o conflito
  * não fica preso pra sempre — só existe enquanto o desacordo é atual.
+ *
+ * "pendente" nunca conta como opinião divergente: só quer dizer que aquele
+ * aparelho não tem (ou não tem mais, depois de um zerar) uma checagem ativa
+ * pra esse atleta — não é um voto competindo com válido/inválido. Só vira
+ * conflito de verdade quando 2+ aparelhos têm respostas ativas e diferentes.
  */
 export function detectConflicts(events: CheckinEvent[]): Conflict[] {
   const byAtleta = new Map<string, CheckinEvent[]>();
@@ -61,7 +66,7 @@ export function detectConflicts(events: CheckinEvent[]): Conflict[] {
       const prev = latestPorAparelho.get(ev.device_id);
       if (!prev || isNewer(ev, prev)) latestPorAparelho.set(ev.device_id, ev);
     }
-    const atuais = [...latestPorAparelho.values()];
+    const atuais = [...latestPorAparelho.values()].filter(e => e.status !== 'pendente');
     const statuses = new Set(atuais.map(e => e.status));
     if (atuais.length > 1 && statuses.size > 1) {
       conflicts.push({
