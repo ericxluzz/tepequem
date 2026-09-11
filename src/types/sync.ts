@@ -40,7 +40,13 @@ export function mergeEvents(events: CheckinEvent[]): Map<string, CheckinEvent> {
   return current;
 }
 
-/** Atletas com eventos de mais de um aparelho e status divergente entre eles. */
+/**
+ * Atletas com o estado ATUAL divergente entre aparelhos — ou seja, pega só a
+ * ação mais recente de cada aparelho (não o histórico inteiro) e compara os
+ * status entre eles. Assim, se dois aparelhos discordaram no passado mas
+ * hoje concordam (ex.: os dois zeraram/confirmaram por último), o conflito
+ * não fica preso pra sempre — só existe enquanto o desacordo é atual.
+ */
 export function detectConflicts(events: CheckinEvent[]): Conflict[] {
   const byAtleta = new Map<string, CheckinEvent[]>();
   for (const ev of events) {
@@ -50,12 +56,17 @@ export function detectConflicts(events: CheckinEvent[]): Conflict[] {
   }
   const conflicts: Conflict[] = [];
   for (const [numero_inscricao, eventos] of byAtleta) {
-    const devices = new Set(eventos.map(e => e.device_id));
-    const statuses = new Set(eventos.map(e => e.status));
-    if (devices.size > 1 && statuses.size > 1) {
+    const latestPorAparelho = new Map<string, CheckinEvent>();
+    for (const ev of eventos) {
+      const prev = latestPorAparelho.get(ev.device_id);
+      if (!prev || isNewer(ev, prev)) latestPorAparelho.set(ev.device_id, ev);
+    }
+    const atuais = [...latestPorAparelho.values()];
+    const statuses = new Set(atuais.map(e => e.status));
+    if (atuais.length > 1 && statuses.size > 1) {
       conflicts.push({
         numero_inscricao,
-        eventos: [...eventos].sort((a, b) => a.checked_at.localeCompare(b.checked_at)),
+        eventos: atuais.sort((a, b) => a.checked_at.localeCompare(b.checked_at)),
       });
     }
   }
