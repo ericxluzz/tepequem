@@ -12,7 +12,7 @@ export function RefazerDialog({ athlete: a, onCancel, onConfirm }: RefazerDialog
   const lastCheck = a.historico[a.historico.length - 1]
   const s = statusStyle(a.status)
   const detalhe = a.status === 'invalido'
-    ? (lastCheck?.motivo || '') + (lastCheck?.observacao ? ' — ' + lastCheck.observacao : '')
+    ? (lastCheck?.observacao || 'Sem observação registrada')
     : 'Documentação conferida na mesa.'
   const assinatura = lastCheck ? `${lastCheck.operador} · ${new Date(lastCheck.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : '—'
 

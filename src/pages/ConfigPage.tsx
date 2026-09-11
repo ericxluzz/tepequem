@@ -13,12 +13,12 @@ interface ConfigPageProps {
 }
 
 export function ConfigPage({ operador, onOperadorChange, pwaStatus, total, checados, onAbrirZerar, sync }: ConfigPageProps) {
-  const [mesaLabel, setMesaLabel] = useState('')
+  const [aparelhoLabel, setMesaLabel] = useState('')
   const [syncMsg, setSyncMsg] = useState('')
 
   useEffect(() => { getDeviceLabel().then(setMesaLabel) }, [])
 
-  async function handleMesaLabelChange(v: string) {
+  async function handleAparelhoLabelChange(v: string) {
     setMesaLabel(v)
     await setDeviceLabel(v)
   }
@@ -48,11 +48,11 @@ export function ConfigPage({ operador, onOperadorChange, pwaStatus, total, checa
           </div>
         </div>
         <div className="flex flex-col gap-1 border-t pt-3" style={{ borderColor: 'var(--line2)' }}>
-          <span className="text-[11px] font-medium" style={{ color: 'var(--ink3)' }}>Nome deste aparelho / mesa</span>
+          <span className="text-[11px] font-medium" style={{ color: 'var(--ink3)' }}>Nome deste aparelho</span>
           <input
-            value={mesaLabel}
-            onChange={e => handleMesaLabelChange(e.target.value)}
-            placeholder="Ex: Mesa 1, Celular da coordenação..."
+            value={aparelhoLabel}
+            onChange={e => handleAparelhoLabelChange(e.target.value)}
+            placeholder="Ex: Aparelho 1, Celular da coordenação..."
             className="h-9 w-full rounded-lg border px-2.5 text-sm outline-none"
             style={{ borderColor: 'var(--line)', background: 'var(--field)', color: 'var(--ink)' }}
           />
@@ -74,10 +74,10 @@ export function ConfigPage({ operador, onOperadorChange, pwaStatus, total, checa
         </div>
       </div>
 
-      {/* Sincronização entre mesas (só aparece quando o Supabase está configurado) */}
+      {/* Sincronização entre aparelhos (só aparece quando o Supabase está configurado) */}
       {sync.isSupabaseConfigured && (
         <div className="flex flex-col gap-2.5 rounded-xl border p-4" style={{ background: 'var(--panel)', borderColor: 'var(--line)' }}>
-          <span className="text-[13.5px] font-semibold" style={{ color: 'var(--ink)' }}>Sincronização entre mesas</span>
+          <span className="text-[13.5px] font-semibold" style={{ color: 'var(--ink)' }}>Sincronização entre aparelhos</span>
           <div className="flex items-center gap-2 text-[12.5px]" style={{ color: 'var(--ink2)' }}>
             <span className="h-1.5 w-1.5 rounded-full" style={{ background: sync.connected ? 'var(--ok)' : 'var(--ink3)' }} />
             {sync.connected ? 'Conectado — enviando checagens automaticamente' : 'Sem conexão no momento — checagens ficam guardadas e enviam sozinhas quando pegar sinal'}

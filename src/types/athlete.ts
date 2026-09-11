@@ -66,18 +66,5 @@ export const SYSTEM_FIELDS: { key: string; label: string; required: boolean }[] 
   { key: 'observacoes', label: 'Observações', required: false },
 ];
 
-export const INVALIDATION_REASONS = [
-  'Documento de identificação não apresentado ou inválido',
-  'Dados divergentes (nome/idade/categoria não conferem com a inscrição)',
-  'Idade fora da faixa da categoria inscrita',
-  'Comprovante de índice técnico não apresentado ou inválido',
-  'Atleta não compareceu / ausente na checagem',
-  'Suspeita de inscrição fraudulenta ou duplicada',
-  'Documentação de PcD ausente ou inválida',
-  'Outro',
-] as const;
-
-export type InvalidationReason = typeof INVALIDATION_REASONS[number];
-
 // Data da prova para cálculo de idade
 export const RACE_DATE = new Date('2026-09-19');

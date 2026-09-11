@@ -79,7 +79,7 @@ export function MergeBackupsSheet({ athletes, onClose, onApplied }: MergeBackups
         <div className="flex items-center justify-between border-b px-4.5 py-3.5" style={{ borderColor: 'var(--line2)' }}>
           <div className="flex flex-col leading-tight">
             <span className="text-[15px] font-semibold" style={{ color: 'var(--ink)' }}>Mesclar backups</span>
-            <span className="text-xs" style={{ color: 'var(--ink3)' }}>Junte os arquivos exportados de outras mesas num relatório único</span>
+            <span className="text-xs" style={{ color: 'var(--ink3)' }}>Junte os arquivos exportados de outros aparelhos num relatório único</span>
           </div>
           <button onClick={onClose} className="flex h-8 w-8 flex-none items-center justify-center rounded-lg text-base" style={{ color: 'var(--ink3)' }}>✕</button>
         </div>
@@ -92,7 +92,7 @@ export function MergeBackupsSheet({ athletes, onClose, onApplied }: MergeBackups
             className="h-[46px] rounded-[11px] border text-[13.5px] font-medium disabled:opacity-50"
             style={{ borderColor: 'var(--line)', background: 'var(--panel)', color: 'var(--ink2)' }}
           >
-            {loading ? 'Lendo arquivos...' : 'Selecionar backups (.json) das outras mesas'}
+            {loading ? 'Lendo arquivos...' : 'Selecionar backups (.json) de outros aparelhos'}
           </button>
           {erro && <span className="text-xs" style={{ color: 'var(--bad)' }}>{erro}</span>}
 
@@ -123,7 +123,7 @@ export function MergeBackupsSheet({ athletes, onClose, onApplied }: MergeBackups
               {conflitos.length > 0 && (
                 <div className="flex flex-col gap-2 rounded-xl border p-3.5" style={{ background: 'var(--badBg)', borderColor: 'var(--badLine)' }}>
                   <span className="text-[12.5px] font-semibold" style={{ color: 'var(--badInk)' }}>
-                    {conflitos.length} atleta(s) checado(s) de forma diferente em mais de uma mesa
+                    {conflitos.length} atleta(s) checado(s) de forma diferente em mais de um aparelho
                   </span>
                   <div className="flex flex-col gap-2">
                     {conflitos.map(c => (
@@ -170,7 +170,7 @@ export function MergeBackupsSheet({ athletes, onClose, onApplied }: MergeBackups
         <ConfirmDialog onClose={() => setConfirmandoAplicar(false)} zIndex={50}>
           <span className="text-base font-semibold" style={{ color: 'var(--ink)' }}>Aplicar mesclagem neste aparelho?</span>
           <span className="text-[13.5px] leading-relaxed" style={{ color: 'var(--ink2)' }}>
-            A base local deste aparelho vai ser sobrescrita com o resultado combinado das mesas selecionadas. Essa ação não pode ser desfeita.
+            A base local deste aparelho vai ser sobrescrita com o resultado combinado dos aparelhos selecionados. Essa ação não pode ser desfeita.
           </span>
           <div className="flex gap-2.5">
             <button onClick={() => setConfirmandoAplicar(false)} className="h-12 flex-1 rounded-xl border text-sm font-medium" style={{ borderColor: 'var(--line)', background: 'var(--panel)', color: 'var(--ink2)' }}>

@@ -22,7 +22,6 @@ export function HistoricoPage({ athletes, onRefazer }: HistoricoPageProps) {
         if (!q) return true
         const h = a.historico[a.historico.length - 1]
         return normalizeForSearch(a.nome).includes(q) ||
-          normalizeForSearch(h?.motivo ?? '').includes(q) ||
           normalizeForSearch(h?.operador ?? '').includes(q)
       })
       .sort((a, b) => {
@@ -40,7 +39,7 @@ export function HistoricoPage({ athletes, onRefazer }: HistoricoPageProps) {
         <input
           value={query}
           onChange={e => setQuery(e.target.value)}
-          placeholder="Buscar por atleta ou motivo"
+          placeholder="Buscar por atleta ou operador"
           className="h-full min-w-0 flex-1 border-0 bg-transparent text-[15px] outline-none"
           style={{ color: 'var(--ink)' }}
         />
@@ -52,7 +51,7 @@ export function HistoricoPage({ athletes, onRefazer }: HistoricoPageProps) {
           const s = statusStyle(a.status)
           const h = a.historico[a.historico.length - 1]
           const detalhe = a.status === 'invalido'
-            ? (h?.motivo || '') + (h?.observacao ? ` — ${h.observacao}` : '')
+            ? (h?.observacao || 'Sem observação registrada')
             : 'Documentação conferida na mesa.'
           return (
             <div key={a.id} className="flex flex-col gap-2 rounded-xl border-l-[3px] border-y border-r p-3.5" style={{ background: 'var(--panel)', borderColor: 'var(--line)', borderLeftColor: s.dot }}>

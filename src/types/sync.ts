@@ -1,11 +1,11 @@
-import type { AthleteStatus, InvalidationReason } from './athlete';
+import type { AthleteStatus } from './athlete';
 
 /** Evento imutável de checagem — a unidade que sincroniza entre aparelhos. */
 export interface CheckinEvent {
   event_id: string;
   numero_inscricao: string;
   status: AthleteStatus;
-  motivo?: InvalidationReason;
+  motivo?: string;
   observacao?: string;
   operador: string;
   device_id: string;

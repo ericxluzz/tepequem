@@ -7,11 +7,11 @@ interface FichaSheetProps {
   athlete: Athlete
   onClose: () => void
   onConfirmar: () => void
-  onAbrirInvalidar: () => void
+  onInvalidar: () => void
   onAbrirRefazer: () => void
 }
 
-export function FichaSheet({ athlete: a, onClose, onConfirmar, onAbrirInvalidar, onAbrirRefazer }: FichaSheetProps) {
+export function FichaSheet({ athlete: a, onClose, onConfirmar, onInvalidar, onAbrirRefazer }: FichaSheetProps) {
   const s = statusStyle(a.status)
   const lastCheck = a.historico[a.historico.length - 1]
   const idade = a.idade_calculada ? `${a.idade_calculada} anos` : '—'
@@ -52,17 +52,11 @@ export function FichaSheet({ athlete: a, onClose, onConfirmar, onAbrirInvalidar,
             <span className="break-words text-sm font-medium leading-tight" style={{ color: 'var(--ink)' }}>{c.v}</span>
           </div>
         ))}
-        {a.status === 'invalido' && lastCheck?.motivo && (
-          <div className="col-span-full flex flex-col gap-1 rounded-xl border p-3.5" style={{ background: 'var(--badBg)', borderColor: 'var(--badLine)' }}>
-            <span className="text-[12.5px] font-semibold" style={{ color: 'var(--badInk)' }}>{lastCheck.motivo}</span>
-            <span className="text-[12.5px] leading-relaxed" style={{ color: 'var(--ink2)' }}>{lastCheck.observacao || 'Sem observação registrada'}</span>
-          </div>
-        )}
       </div>
 
       {a.status === 'pendente' ? (
         <SheetFooter>
-          <button onClick={onAbrirInvalidar} className="h-[54px] flex-1 rounded-xl border text-[15px] font-medium" style={{ borderColor: 'var(--badLine)', background: 'var(--panel)', color: 'var(--bad)' }}>
+          <button onClick={onInvalidar} className="h-[54px] flex-1 rounded-xl border text-[15px] font-medium" style={{ borderColor: 'var(--badLine)', background: 'var(--panel)', color: 'var(--bad)' }}>
             Invalidar
           </button>
           <button onClick={onConfirmar} className="h-[54px] flex-[1.5] rounded-xl text-[15px] font-medium text-white" style={{ background: 'var(--ok)' }}>

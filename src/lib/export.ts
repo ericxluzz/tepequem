@@ -71,7 +71,6 @@ async function buildAthletesSheet(workbook: ExcelJS.Workbook, athletes: Athlete[
     columns.push({ header: 'Telefone', key: 'telefone', width: 16 });
     columns.push({ header: 'E-mail', key: 'email', width: 24 });
   }
-  columns.push({ header: 'Motivo Invalidação', key: 'motivo', width: 40 });
   if (options.incluirObs) columns.push({ header: 'Observação', key: 'observacao', width: 30 });
   columns.push({ header: 'Operador', key: 'operador', width: 18 });
   columns.push({ header: 'Data/Hora Checagem', key: 'timestamp', width: 20 });
@@ -107,7 +106,6 @@ async function buildAthletesSheet(workbook: ExcelJS.Workbook, athletes: Athlete[
       email: athlete.email ?? '',
       cidade_uf: up([athlete.cidade, athlete.uf].filter(Boolean).join('/')),
       equipe: up(athlete.equipe),
-      motivo: up(lastCheck?.motivo),
       observacao: up(lastCheck?.observacao),
       operador: up(lastCheck?.operador),
       timestamp: lastCheck ? formatDateTime(lastCheck.timestamp) : '',
@@ -182,25 +180,6 @@ async function buildSummarySheet(workbook: ExcelJS.Workbook, athletes: Athlete[]
       addDataRow(cat, `${validosCat}/${count} válidos`, r++);
     }
   }
-
-  // Motivos de invalidação
-  const invalidados = athletes.filter((a) => a.status === 'invalido');
-  if (invalidados.length > 0) {
-    const startRow = 13 + categorias.length;
-    sheet.getRow(startRow).getCell(1).value = 'MOTIVOS DE INVALIDAÇÃO';
-    sheet.getRow(startRow).getCell(1).font = { bold: true, size: 11 };
-
-    const motivoCount: Record<string, number> = {};
-    for (const a of invalidados) {
-      const motivo = a.historico[a.historico.length - 1]?.motivo ?? 'Não especificado';
-      motivoCount[motivo] = (motivoCount[motivo] ?? 0) + 1;
-    }
-
-    let r = startRow + 1;
-    for (const [motivo, count] of Object.entries(motivoCount)) {
-      addDataRow(motivo, count, r++, 'FFF8D7DA');
-    }
-  }
 }
 
 /**
@@ -222,7 +201,6 @@ export function openPrintReport(athletes: Athlete[], options: ReportOptions = DE
   ];
   if (options.incluirContato) cols.push({ t: 'Telefone', v: (a) => a.telefone || '', center: true });
   cols.push({ t: 'Situação', v: (a) => (a.status === 'valido' ? 'Válido' : a.status === 'invalido' ? 'Inválido' : 'Pendente'), center: true });
-  cols.push({ t: 'Motivo', v: (a) => a.historico[a.historico.length - 1]?.motivo || '' });
   if (options.incluirObs) cols.push({ t: 'Observação', v: (a) => a.historico[a.historico.length - 1]?.observacao || '' });
   cols.push({ t: 'Operador', v: (a) => a.historico[a.historico.length - 1]?.operador || '', center: true });
 

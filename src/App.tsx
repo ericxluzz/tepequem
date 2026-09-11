@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { getSetting, setSetting } from './db/database'
 import { useChecagem } from './hooks/useChecagem'
 import { useSync } from './hooks/useSync'
-import type { Athlete, InvalidationReason } from './types/athlete'
+import type { Athlete } from './types/athlete'
 import { FILTROS_VAZIOS, type Filtros } from './types/filtros'
 import { Icon, type IconName } from './lib/icons'
 import { PainelPage } from './pages/PainelPage'
@@ -12,7 +12,6 @@ import { RelatoriosPage } from './pages/RelatoriosPage'
 import { ConfigPage } from './pages/ConfigPage'
 import { FiltrosSheet } from './components/FiltrosSheet'
 import { FichaSheet } from './components/FichaSheet'
-import { InvalidarSheet } from './components/InvalidarSheet'
 import { RefazerDialog } from './components/RefazerDialog'
 import { ZerarDialog } from './components/ZerarDialog'
 import { FeedbackOverlay, type FeedbackData } from './components/FeedbackOverlay'
@@ -20,7 +19,7 @@ import { Toast, type ToastTipo } from './components/Toast'
 import { InstallBanner } from './components/InstallBanner'
 
 export type Screen = 'painel' | 'busca' | 'historico' | 'relatorios' | 'config'
-type Modal = 'filtros' | 'ficha' | 'invalidar' | 'refazer' | 'zerar' | null
+type Modal = 'filtros' | 'ficha' | 'refazer' | 'zerar' | null
 
 const NAV: { k: Screen; label: string; icon: IconName }[] = [
   { k: 'painel', label: 'Painel', icon: 'painel' },
@@ -100,13 +99,14 @@ export default function App() {
     })
   }
 
-  async function handleInvalidar(motivo: InvalidationReason, obs: string) {
+  async function handleInvalidar() {
     if (!sel?.id) return
-    const nome = sel.nome
-    const record = await invalidar(sel.id, motivo, obs, operador)
+    const nome = sel.nome, num = sel.numero_inscricao, cat = sel.categoria || ''
+    const record = await invalidar(sel.id, operador)
     setModal(null); setSelId(null)
     setFeedback({
-      tipo: 'erro', titulo: 'Atleta invalidado', nome, detalhe: motivo,
+      tipo: 'erro', titulo: 'Atleta invalidado', nome,
+      detalhe: `#${num} · ${cat}`,
       assinatura: `Registrado por ${record.operador} às ${new Date(record.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`,
     })
   }
@@ -329,15 +329,8 @@ export default function App() {
           athlete={sel}
           onClose={fecharFicha}
           onConfirmar={handleConfirmar}
-          onAbrirInvalidar={() => setModal('invalidar')}
+          onInvalidar={handleInvalidar}
           onAbrirRefazer={abrirRefazerDeFicha}
-        />
-      )}
-      {modal === 'invalidar' && sel && (
-        <InvalidarSheet
-          athleteName={sel.nome}
-          onCancel={() => setModal('ficha')}
-          onConfirm={handleInvalidar}
         />
       )}
       {modal === 'refazer' && alvoRefazer && (

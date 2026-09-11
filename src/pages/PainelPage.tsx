@@ -102,16 +102,16 @@ export function PainelPage({ stats, athletes, onNavigate, sync }: PainelPageProp
         </div>
       </div>
 
-      {/* Listagem principal — resultado combinado das 4 mesas */}
+      {/* Listagem principal — resultado combinado de todos os aparelhos */}
       {sync.isSupabaseConfigured && (
         <div className="flex flex-col gap-3 rounded-xl border p-4" style={{ background: 'var(--accentSoft)', borderColor: 'var(--accentLine)' }}>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full" style={{ background: sync.connected ? 'var(--ok)' : 'var(--ink3)' }} />
-              <span className="text-[13.5px] font-semibold" style={{ color: 'var(--accent)' }}>Listagem principal — todas as mesas</span>
+              <span className="text-[13.5px] font-semibold" style={{ color: 'var(--accent)' }}>Listagem principal — todos os aparelhos</span>
             </div>
             {sync.pendingCount > 0 && (
-              <span className="text-[11px]" style={{ color: 'var(--ink3)' }}>{sync.pendingCount} desta mesa aguardando envio</span>
+              <span className="text-[11px]" style={{ color: 'var(--ink3)' }}>{sync.pendingCount} deste aparelho aguardando envio</span>
             )}
           </div>
 
@@ -132,11 +132,11 @@ export function PainelPage({ stats, athletes, onNavigate, sync }: PainelPageProp
               {oficial.conflitos.length > 0 && (
                 <div className="flex flex-col gap-2 rounded-xl border p-3.5" style={{ background: 'var(--badBg)', borderColor: 'var(--badLine)' }}>
                   <span className="text-[12.5px] font-semibold" style={{ color: 'var(--badInk)' }}>
-                    {oficial.conflitos.length} atleta(s) com resposta diferente entre mesas — vira observação no relatório
+                    {oficial.conflitos.length} atleta(s) com resposta diferente entre aparelhos — vira observação no relatório
                   </span>
                   {oficial.conflitos.slice(0, 5).map(c => (
                     <span key={c.numero_inscricao} className="text-[12px]" style={{ color: 'var(--ink2)' }}>
-                      <strong style={{ color: 'var(--ink)' }}>#{c.numero_inscricao}</strong> — {c.eventos.map(e => `${e.device_label || 'aparelho'}: ${e.status}`).join(' vs ')}
+                      <strong style={{ color: 'var(--ink)' }}>#{c.numero_inscricao}</strong> — {c.eventos.map(e => `${e.device_label || 'Aparelho ' + e.device_id.slice(0, 6)}: ${e.status}`).join(' vs ')}
                     </span>
                   ))}
                   {oficial.conflitos.length > 5 && (
@@ -146,7 +146,7 @@ export function PainelPage({ stats, athletes, onNavigate, sync }: PainelPageProp
               )}
             </>
           ) : (
-            <span className="text-[12.5px]" style={{ color: 'var(--ink3)' }}>Ainda sem dados de outras mesas — lance o histórico ou aguarde a conexão.</span>
+            <span className="text-[12.5px]" style={{ color: 'var(--ink3)' }}>Ainda sem dados de outros aparelhos — lance o histórico ou aguarde a conexão.</span>
           )}
 
           <div className="grid grid-cols-2 gap-2.5">
@@ -185,7 +185,7 @@ export function PainelPage({ stats, athletes, onNavigate, sync }: PainelPageProp
           </button>
           {lancarMsg && <span className="text-xs" style={{ color: lancarMsg.startsWith('Erro') ? 'var(--bad)' : 'var(--ok)' }}>{lancarMsg}</span>}
           {exportMsg && <span className="text-xs" style={{ color: 'var(--ink2)' }}>{exportMsg}</span>}
-          <span className="text-[11px]" style={{ color: 'var(--ink3)' }}>A listagem principal é só leitura — não muda o que aparece na sua mesa</span>
+          <span className="text-[11px]" style={{ color: 'var(--ink3)' }}>A listagem principal é só leitura — não muda o que aparece no seu aparelho</span>
         </div>
       )}
 

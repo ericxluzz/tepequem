@@ -5,7 +5,7 @@ import type { Athlete } from '../types/athlete';
 /**
  * Planilha oficial da prova, embutida no build — todo aparelho que abrir o
  * app já nasce com a mesma base de atletas, sem precisar de nenhum passo
- * manual de importação (e sem risco de uma mesa carregar um arquivo diferente).
+ * manual de importação (e sem risco de um aparelho carregar um arquivo diferente).
  */
 export function getSeedAthletes(): Athlete[] {
   const parsed = parseCsvText(csvRaw);

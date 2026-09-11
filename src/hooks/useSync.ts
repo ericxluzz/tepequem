@@ -83,7 +83,7 @@ export function useSync() {
   }, [])
 
   // Realtime: mantém a listagem combinada em dia com qualquer mudança na
-  // tabela — inserção de outra mesa, mas também remoção/edição feita direto
+  // tabela — inserção de outro aparelho, mas também remoção/edição feita direto
   // no painel do Supabase (ex.: uma limpeza de dados de teste).
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) return

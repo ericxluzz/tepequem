@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { db, getOrCreateDeviceId, getDeviceLabel, seedIfEmpty } from '../db/database'
-import type { Athlete, AthleteStatus, InvalidationReason, CheckRecord } from '../types/athlete'
+import type { Athlete, AthleteStatus, CheckRecord } from '../types/athlete'
 import type { CheckinEvent } from '../types/sync'
 
 export interface Stats {
@@ -49,16 +49,13 @@ export function useChecagem() {
   )
 
   async function recordEvent(patch: {
-    numero_inscricao: string; status: AthleteStatus; motivo?: InvalidationReason;
-    observacao?: string; operador: string; checked_at: string;
+    numero_inscricao: string; status: AthleteStatus; operador: string; checked_at: string;
   }): Promise<void> {
     const [device_id, device_label] = await Promise.all([getOrCreateDeviceId(), getDeviceLabel()])
     const event: CheckinEvent = {
       event_id: crypto.randomUUID(),
       numero_inscricao: patch.numero_inscricao,
       status: patch.status,
-      motivo: patch.motivo,
-      observacao: patch.observacao,
       operador: patch.operador,
       device_id,
       device_label: device_label || undefined,
@@ -79,18 +76,12 @@ export function useChecagem() {
     return record
   }
 
-  async function invalidar(id: number, motivo: InvalidationReason, observacao: string, operador: string): Promise<CheckRecord> {
+  async function invalidar(id: number, operador: string): Promise<CheckRecord> {
     const alvo = athletes.find(a => a.id === id)
-    const record: CheckRecord = {
-      status: 'invalido', motivo, observacao: observacao || undefined,
-      operador: operador || 'Operador', timestamp: new Date().toISOString(),
-    }
+    const record: CheckRecord = { status: 'invalido', operador: operador || 'Operador', timestamp: new Date().toISOString() }
     await db.athletes.update(id, { status: 'invalido' as AthleteStatus, historico: [record] })
     if (alvo) {
-      await recordEvent({
-        numero_inscricao: alvo.numero_inscricao, status: 'invalido', motivo, observacao: record.observacao,
-        operador: record.operador, checked_at: record.timestamp,
-      })
+      await recordEvent({ numero_inscricao: alvo.numero_inscricao, status: 'invalido', operador: record.operador, checked_at: record.timestamp })
     }
     await reload()
     return record
