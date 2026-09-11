@@ -225,9 +225,12 @@ export default function App() {
           style={{ background: 'var(--panel)', borderColor: 'var(--line)' }}
         >
           <div className="flex items-center justify-between gap-3">
-            <div className="flex min-w-0 flex-col leading-tight">
-              <span className="truncate text-[17px] font-semibold min-[900px]:text-[19px]" style={{ color: 'var(--ink)' }}>{titulo}</span>
-              <span className="truncate text-[11.5px]" style={{ color: 'var(--ink3)' }}>{sub}</span>
+            <div className="flex min-w-0 items-center gap-2.5">
+              <img src="/icon-192.png" width={30} height={30} alt="" className="flex-none rounded-lg min-[900px]:hidden" />
+              <div className="flex min-w-0 flex-col leading-tight">
+                <span className="truncate text-[17px] font-semibold min-[900px]:text-[19px]" style={{ color: 'var(--ink)' }}>{titulo}</span>
+                <span className="truncate text-[11.5px]" style={{ color: 'var(--ink3)' }}>{sub}</span>
+              </div>
             </div>
             <div className="flex flex-none items-center gap-2">
               <div className="hidden h-[38px] items-center gap-1.5 whitespace-nowrap rounded-[10px] border px-3 text-xs min-[900px]:flex" style={{ background: 'var(--panel)', borderColor: 'var(--line)', color: 'var(--ink2)' }}>
