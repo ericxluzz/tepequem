@@ -17,6 +17,7 @@ import { ZerarDialog } from './components/ZerarDialog'
 import { FeedbackOverlay, type FeedbackData } from './components/FeedbackOverlay'
 import { Toast, type ToastTipo } from './components/Toast'
 import { InstallBanner } from './components/InstallBanner'
+import { CloudResetBanner } from './components/CloudResetBanner'
 
 export type Screen = 'painel' | 'busca' | 'historico' | 'relatorios' | 'config'
 type Modal = 'filtros' | 'ficha' | 'refazer' | 'zerar' | null
@@ -140,6 +141,19 @@ export default function App() {
     if (sync.isSupabaseConfigured) sync.syncNow()
   }
 
+  async function handleZerarNuvemSucesso() {
+    await zerarTudo(operador)
+    await sync.dismissCloudReset()
+    showToast('Nuvem e este aparelho zerados.', 'erro')
+    if (sync.isSupabaseConfigured) sync.syncNow()
+  }
+
+  async function handleZerarLocalAposResetNuvem() {
+    await zerarTudo(operador)
+    await sync.dismissCloudReset()
+    showToast('Aparelho zerado.', 'erro')
+  }
+
   const checados = stats.checados
   const ativos = filtros.categoria !== 'Todas' || filtros.sexo !== 'Todos' || filtros.uf !== 'Todas' || filtros.equipe !== 'Todas'
   const resultadosFiltrados = athletes.filter(a => {
@@ -260,6 +274,9 @@ export default function App() {
         </div>
 
         <InstallBanner />
+        {sync.cloudWasReset && (
+          <CloudResetBanner onZerarLocal={handleZerarLocalAposResetNuvem} onIgnorar={() => sync.dismissCloudReset()} />
+        )}
 
         {/* Conteúdo */}
         <div className="flex-1 min-w-0 p-3 px-3.5 pb-[calc(84px+env(safe-area-inset-bottom))] min-[900px]:p-0" key={screen}>
@@ -289,6 +306,7 @@ export default function App() {
               total={stats.total}
               checados={checados}
               onAbrirZerar={() => setModal('zerar')}
+              onZerarNuvemSucesso={handleZerarNuvemSucesso}
               sync={sync}
             />
           )}

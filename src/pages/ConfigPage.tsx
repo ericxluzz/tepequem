@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getDeviceLabel, setDeviceLabel } from '../db/database'
 import type { useSync } from '../hooks/useSync'
+import { AdminResetDialog } from '../components/AdminResetDialog'
 
 interface ConfigPageProps {
   operador: string
@@ -9,12 +10,14 @@ interface ConfigPageProps {
   total: number
   checados: number
   onAbrirZerar: () => void
+  onZerarNuvemSucesso: () => void
   sync: ReturnType<typeof useSync>
 }
 
-export function ConfigPage({ operador, onOperadorChange, pwaStatus, total, checados, onAbrirZerar, sync }: ConfigPageProps) {
+export function ConfigPage({ operador, onOperadorChange, pwaStatus, total, checados, onAbrirZerar, onZerarNuvemSucesso, sync }: ConfigPageProps) {
   const [aparelhoLabel, setMesaLabel] = useState('')
   const [syncMsg, setSyncMsg] = useState('')
+  const [showAdminReset, setShowAdminReset] = useState(false)
 
   useEffect(() => { getDeviceLabel().then(setMesaLabel) }, [])
 
@@ -117,7 +120,30 @@ export function ConfigPage({ operador, onOperadorChange, pwaStatus, total, checa
         >
           Zerar todas as checagens
         </button>
+        {sync.isSupabaseConfigured && (
+          <>
+            <div className="border-t pt-2.5" style={{ borderColor: 'var(--badLine)' }}>
+              <span className="text-xs leading-relaxed" style={{ color: 'var(--ink2)' }}>
+                Apaga o histórico combinado de todos os aparelhos na nuvem — use só pra reiniciar testes, nunca depois que a prova começar.
+              </span>
+            </div>
+            <button
+              onClick={() => setShowAdminReset(true)}
+              className="h-[46px] rounded-[11px] text-[13.5px] font-medium text-white"
+              style={{ background: 'var(--bad)' }}
+            >
+              Zerar tudo — nuvem inteira
+            </button>
+          </>
+        )}
       </div>
+
+      {showAdminReset && (
+        <AdminResetDialog
+          onCancel={() => setShowAdminReset(false)}
+          onSuccess={() => { setShowAdminReset(false); onZerarNuvemSucesso() }}
+        />
+      )}
     </div>
   )
 }

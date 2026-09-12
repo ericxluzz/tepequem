@@ -4,6 +4,7 @@ import { checkConnectivity, pushPendingEvents, pullAllEvents, countPending } fro
 import { mergeEvents, detectConflicts } from '../types/sync'
 import type { CheckinEvent } from '../types/sync'
 import type { Stats } from './useChecagem'
+import { db, getSetting, setSetting } from '../db/database'
 
 const POLL_MIN_MS = 25_000
 const POLL_MAX_MS = 300_000
@@ -23,6 +24,7 @@ export function useSync() {
   const [pendingCount, setPendingCount] = useState(0)
   const [syncing, setSyncing] = useState(false)
   const [rawEvents, setRawEvents] = useState<CheckinEvent[] | null>(null)
+  const [cloudWasReset, setCloudWasReset] = useState(false)
   const pollDelay = useRef(POLL_MIN_MS)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const wasConnected = useRef(false)
@@ -32,10 +34,30 @@ export function useSync() {
     setPendingCount(await countPending())
   }, [])
 
+  // Detecta se a nuvem foi zerada por outro aparelho (ou via SQL manual): se
+  // este aparelho já tem eventos marcados como enviados que sumiram do
+  // resultado da nuvem, é porque alguém apagou tudo — não tem outro jeito de
+  // um evento "enviado" deixar de existir lá.
+  const checkCloudReset = useCallback(async (remote: CheckinEvent[]) => {
+    const ackAt = await getSetting('cloudResetAckAt')
+    const localSynced = (await db.checkin_events.toArray())
+      .filter(e => e.synced && (!ackAt || e.checked_at > ackAt))
+    if (localSynced.length === 0) return
+    const remoteIds = new Set(remote.map(e => e.event_id))
+    if (localSynced.some(e => !remoteIds.has(e.event_id))) setCloudWasReset(true)
+  }, [])
+
+  const dismissCloudReset = useCallback(async () => {
+    await setSetting('cloudResetAckAt', new Date().toISOString())
+    setCloudWasReset(false)
+  }, [])
+
   const pullCombined = useCallback(async () => {
     if (!isSupabaseConfigured) return
-    setRawEvents(await pullAllEvents())
-  }, [])
+    const events = await pullAllEvents()
+    setRawEvents(events)
+    checkCloudReset(events)
+  }, [checkCloudReset])
 
   const syncNow = useCallback(async (): Promise<{ ok: boolean; sent: number }> => {
     if (!isSupabaseConfigured || syncingRef.current) return { ok: false, sent: 0 }
@@ -130,5 +152,7 @@ export function useSync() {
     combined,
     combinedStats,
     conflitos,
+    cloudWasReset,
+    dismissCloudReset,
   }
 }
