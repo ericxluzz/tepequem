@@ -19,7 +19,7 @@ function up(v: unknown): string {
 
 const ORDEM_STATUS: Record<Athlete['status'], number> = { invalido: 0, valido: 1, pendente: 2 };
 
-/** Desclassificados primeiro, depois válidos, depois pendentes; dentro de cada grupo, por número de peito. */
+/** Desclassificados primeiro, depois aprovados, depois pendentes; dentro de cada grupo, por número de peito. */
 function ordenarParaRelatorio(athletes: Athlete[]): Athlete[] {
   return [...athletes].sort(
     (a, b) =>
@@ -102,7 +102,7 @@ async function buildAthletesSheet(workbook: ExcelJS.Workbook, athletes: Athlete[
   for (const athlete of ordenarParaRelatorio(athletes)) {
     const lastCheck = athlete.historico[athlete.historico.length - 1];
     const statusLabel =
-      athlete.status === 'valido' ? 'VÁLIDO' : athlete.status === 'invalido' ? 'DESCLASSIFICADO' : 'PENDENTE';
+      athlete.status === 'valido' ? 'APROVADO' : athlete.status === 'invalido' ? 'DESCLASSIFICADO' : 'PENDENTE';
 
     const row = sheet.addRow({
       numero_inscricao: athlete.numero_inscricao,
@@ -175,7 +175,7 @@ async function buildSummarySheet(workbook: ExcelJS.Workbook, athletes: Athlete[]
   sheet.getRow(4).getCell(1).font = { bold: true, size: 11 };
 
   addDataRow('Total de Inscritos', total, 5);
-  addDataRow('✅ Válidos', validos, 6, 'FFD4EDDA');
+  addDataRow('✅ Aprovados', validos, 6, 'FFD4EDDA');
   addDataRow('❌ Desclassificados', invalidos, 7, 'FFF8D7DA');
   addDataRow('⏳ Pendentes', pendentes, 8, 'FFE2E3E5');
 
@@ -188,7 +188,7 @@ async function buildSummarySheet(workbook: ExcelJS.Workbook, athletes: Athlete[]
     for (const cat of categorias) {
       const count = athletes.filter((a) => a.categoria === cat).length;
       const validosCat = athletes.filter((a) => a.categoria === cat && a.status === 'valido').length;
-      addDataRow(cat, `${validosCat}/${count} válidos`, r++);
+      addDataRow(cat, `${validosCat}/${count} aprovados`, r++);
     }
   }
 }
@@ -204,7 +204,7 @@ export function openPrintReport(athletes: Athlete[], options: ReportOptions = DE
 
   const cols: { t: string; v: (a: Athlete) => string; center?: boolean }[] = [
     { t: 'Nº de Peito', v: (a) => a.numero_inscricao, center: true },
-    { t: 'Situação', v: (a) => (a.status === 'valido' ? 'Válido' : a.status === 'invalido' ? 'Desclassificado' : 'Pendente'), center: true },
+    { t: 'Status', v: (a) => (a.status === 'valido' ? 'Aprovado' : a.status === 'invalido' ? 'Desclassificado' : 'Pendente'), center: true },
     { t: 'Nome', v: (a) => a.nome },
     { t: 'Categoria', v: (a) => a.categoria || '' },
     { t: 'CPF', v: (a) => a.cpf || '', center: true },
@@ -218,7 +218,7 @@ export function openPrintReport(athletes: Athlete[], options: ReportOptions = DE
   const th = cols.map((c) => `<th>${esc(c.t)}</th>`).join('');
   const tr = ordenarParaRelatorio(athletes).map((a, i) => {
     const cls = a.status === 'invalido' ? 'inv' : i % 2 ? 'alt' : 'row';
-    return `<tr class="${cls}">${cols.map((c) => `<td class="${c.center ? 'center' : ''}${c.t === 'Situação' ? ' sit ' + a.status : ''}${c.t === 'Nome' ? ' nome' : ''}">${esc(c.v(a))}</td>`).join('')}</tr>`;
+    return `<tr class="${cls}">${cols.map((c) => `<td class="${c.center ? 'center' : ''}${c.t === 'Status' ? ' sit ' + a.status : ''}${c.t === 'Nome' ? ' nome' : ''}">${esc(c.v(a))}</td>`).join('')}</tr>`;
   }).join('');
 
   const html = '<html><head><meta charset="utf-8"><title>Relatório de checagem</title><style>'
@@ -241,7 +241,7 @@ export function openPrintReport(athletes: Athlete[], options: ReportOptions = DE
     + 'table.assin td.gap{border:0;width:5%}'
     + '</style></head><body>'
     + `<h1>Tepequém Up 2026 — RELATÓRIO OFICIAL DE CHECAGEM</h1>`
-    + `<p class="sub">Emissão: ${new Date().toLocaleString('pt-BR')} · Total: ${athletes.length} · Válidos: ${validos} · Desclassificados: ${invalidos} · Pendentes: ${pendentes}</p>`
+    + `<p class="sub">Emissão: ${new Date().toLocaleString('pt-BR')} · Total: ${athletes.length} · Aprovados: ${validos} · Desclassificados: ${invalidos} · Pendentes: ${pendentes}</p>`
     + `<table class="grid"><thead><tr>${th}</tr></thead><tbody>${tr}</tbody></table>`
     + '<p class="rod">Documento gerado eletronicamente pelo sistema de checagem de atletas.</p>'
     + '<table class="assin"><tr><td>Coordenação da checagem</td><td class="gap"></td><td>Responsável técnico</td><td class="gap"></td><td>Organização do evento</td></tr></table>'

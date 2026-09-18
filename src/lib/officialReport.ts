@@ -9,7 +9,7 @@ export interface OfficialReport {
 }
 
 const STATUS_LABEL: Record<CheckinEvent['status'], string> = {
-  valido: 'Válido', invalido: 'Desclassificado', pendente: 'Pendente',
+  valido: 'Aprovado', invalido: 'Desclassificado', pendente: 'Pendente',
 };
 
 function formatHora(iso: string): string {
