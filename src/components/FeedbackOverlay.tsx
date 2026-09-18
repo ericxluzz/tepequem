@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 export interface FeedbackData {
   tipo: 'ok' | 'erro'
@@ -10,12 +10,21 @@ export interface FeedbackData {
 
 const CHECK = 'M22 34.5l8.5 8.5L47 26'
 const CROSS = 'M25 25l18 18M43 25L25 43'
+const DURACAO_MS = 1000
 
+/**
+ * Aviso rápido de confirmado/desclassificado. Não captura toques
+ * (pointer-events-none): dá pra já tocar no próximo atleta enquanto ele
+ * ainda está na tela. Um aviso novo substitui o anterior e reinicia o tempo.
+ */
 export function FeedbackOverlay({ data, onClose }: { data: FeedbackData; onClose: () => void }) {
+  const onCloseRef = useRef(onClose)
+  useEffect(() => { onCloseRef.current = onClose })
+
   useEffect(() => {
-    const t = setTimeout(onClose, 4200)
+    const t = setTimeout(() => onCloseRef.current(), DURACAO_MS)
     return () => clearTimeout(t)
-  }, [onClose])
+  }, [data])
 
   const ok = data.tipo === 'ok'
   const color = ok ? 'var(--ok)' : 'var(--bad)'
@@ -23,45 +32,29 @@ export function FeedbackOverlay({ data, onClose }: { data: FeedbackData; onClose
   const path = ok ? CHECK : CROSS
 
   return (
-    <div
-      className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-5.5 p-7 text-center animate-[fade_.18s_ease]"
-      style={{ background: 'var(--overlay)', backdropFilter: 'blur(4px)' }}
-    >
-      <div className="flex h-[116px] w-[116px] items-center justify-center animate-[pop_.5s_cubic-bezier(.2,.9,.3,1.2)]">
-        <svg width={116} height={116} viewBox="0 0 68 68" fill="none">
+    <div className="pointer-events-none fixed inset-x-0 top-[12%] z-[60] flex justify-center px-5">
+      <div
+        className="flex w-full max-w-[420px] items-center gap-3.5 rounded-2xl border-2 p-3.5 animate-[pop_.16s_ease-out]"
+        style={{ background: 'var(--panel)', borderColor: color, boxShadow: 'var(--shadow)' }}
+      >
+        <svg width={56} height={56} viewBox="0 0 68 68" fill="none" className="flex-none">
           <circle cx={34} cy={34} r={30} stroke={track} strokeWidth={4} />
           <circle
             cx={34} cy={34} r={30} stroke={color} strokeWidth={4} strokeLinecap="round"
             strokeDasharray={189} strokeDashoffset={189} transform="rotate(-90 34 34)"
-            style={{ animation: 'ring .9s cubic-bezier(.4,0,.2,1) forwards' }}
+            style={{ animation: 'ring .22s ease-out forwards' }}
           />
           <path
             d={path} stroke={color} strokeWidth={4.5} strokeLinecap="round" strokeLinejoin="round"
             strokeDasharray={48} strokeDashoffset={48}
-            style={{ animation: 'draw .55s cubic-bezier(.4,0,.2,1) .5s forwards' }}
+            style={{ animation: 'draw .16s ease-out .1s forwards' }}
           />
         </svg>
-      </div>
-      <div className="flex max-w-[520px] flex-col items-center gap-2 animate-[riseIn_.45s_ease_.3s_both]">
-        <span className="text-[13px] font-medium uppercase tracking-[0.12em]" style={{ color }}>{data.titulo}</span>
-        <span className="text-2xl font-semibold leading-tight tracking-tight" style={{ color: 'var(--ink)' }}>{data.nome}</span>
-        <span className="text-sm leading-relaxed" style={{ color: 'var(--ink2)' }}>{data.detalhe}</span>
-        <span className="text-[12.5px]" style={{ color: 'var(--ink3)' }}>{data.assinatura}</span>
-      </div>
-      <div className="flex flex-col items-center gap-3 animate-[fade_.3s_ease_.6s_both]">
-        <button
-          onClick={onClose}
-          className="h-[46px] rounded-xl border px-6.5 text-sm font-medium"
-          style={{ background: 'var(--panel)', borderColor: 'var(--line)', color: 'var(--ink2)' }}
-        >
-          Continuar checagem
-        </button>
-        <span className="h-[3px] w-[168px] overflow-hidden rounded-full" style={{ background: 'var(--line)' }}>
-          <span
-            className="block h-full w-full origin-left"
-            style={{ background: color, animation: 'countdown 4.2s linear forwards' }}
-          />
-        </span>
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <span className="text-[11.5px] font-semibold uppercase tracking-[0.1em]" style={{ color }}>{data.titulo}</span>
+          <span className="truncate text-[17px] font-semibold leading-tight" style={{ color: 'var(--ink)' }}>{data.nome}</span>
+          <span className="truncate text-[12.5px]" style={{ color: 'var(--ink3)' }}>{data.detalhe}</span>
+        </div>
       </div>
     </div>
   )

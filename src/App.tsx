@@ -45,6 +45,11 @@ export default function App() {
   const [selId, setSelId] = useState<number | null>(null)
   const [alvoRefazerId, setAlvoRefazerId] = useState<number | null>(null)
   const [feedback, setFeedback] = useState<FeedbackData | null>(null)
+  const [feedbackKey, setFeedbackKey] = useState(0)
+  function mostrarFeedback(d: FeedbackData) {
+    setFeedback(d)
+    setFeedbackKey(k => k + 1)
+  }
   const [toast, setToastState] = useState<{ msg: string; tipo: ToastTipo } | null>(null)
 
   useEffect(() => {
@@ -93,7 +98,7 @@ export default function App() {
     const nome = sel.nome, num = sel.numero_inscricao, cat = sel.categoria || ''
     const record = await confirmar(sel.id, operador)
     setModal(null); setSelId(null)
-    setFeedback({
+    mostrarFeedback({
       tipo: 'ok', titulo: 'Atleta confirmado', nome,
       detalhe: `#${num} · ${cat}`,
       assinatura: `Registrado por ${record.operador} às ${new Date(record.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`,
@@ -105,7 +110,7 @@ export default function App() {
     const nome = sel.nome, num = sel.numero_inscricao, cat = sel.categoria || ''
     const record = await invalidar(sel.id, operador)
     setModal(null); setSelId(null)
-    setFeedback({
+    mostrarFeedback({
       tipo: 'erro', titulo: 'Atleta desclassificado', nome,
       detalhe: `#${num} · ${cat}`,
       assinatura: `Registrado por ${record.operador} às ${new Date(record.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`,
@@ -359,7 +364,7 @@ export default function App() {
         <ZerarDialog checados={checados} total={stats.total} onCancel={() => setModal(null)} onConfirm={confirmarZerar} />
       )}
 
-      {feedback && <FeedbackOverlay data={feedback} onClose={() => setFeedback(null)} />}
+      {feedback && <FeedbackOverlay key={feedbackKey} data={feedback} onClose={() => setFeedback(null)} />}
       {toast && <Toast mensagem={toast.msg} tipo={toast.tipo} />}
     </div>
   )

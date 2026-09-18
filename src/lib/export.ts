@@ -17,6 +17,17 @@ function up(v: unknown): string {
   return String(v ?? '').toUpperCase();
 }
 
+const ORDEM_STATUS: Record<Athlete['status'], number> = { invalido: 0, valido: 1, pendente: 2 };
+
+/** Desclassificados primeiro, depois válidos, depois pendentes; dentro de cada grupo, por número de peito. */
+function ordenarParaRelatorio(athletes: Athlete[]): Athlete[] {
+  return [...athletes].sort(
+    (a, b) =>
+      ORDEM_STATUS[a.status] - ORDEM_STATUS[b.status] ||
+      a.numero_inscricao.localeCompare(b.numero_inscricao, 'pt-BR', { numeric: true })
+  );
+}
+
 export interface ReportOptions {
   incluirObs: boolean;
   incluirContato: boolean;
@@ -56,9 +67,9 @@ async function buildAthletesSheet(workbook: ExcelJS.Workbook, athletes: Athlete[
   });
 
   const columns: { header: string; key: string; width: number }[] = [
-    { header: 'Nº Inscrição', key: 'numero_inscricao', width: 14 },
+    { header: 'Nº de Peito', key: 'numero_inscricao', width: 13 },
+    { header: 'Status', key: 'status', width: 17 },
     { header: 'Nome', key: 'nome', width: 35 },
-    { header: 'Status', key: 'status', width: 12 },
     { header: 'CPF / Doc', key: 'cpf', width: 16 },
     { header: 'Data Nasc.', key: 'data_nascimento', width: 13 },
     { header: 'Idade', key: 'idade_calculada', width: 8 },
@@ -87,8 +98,8 @@ async function buildAthletesSheet(workbook: ExcelJS.Workbook, athletes: Athlete[
   });
   headerRow.height = 22;
 
-  // Adiciona linhas de dados
-  for (const athlete of athletes) {
+  // Adiciona linhas de dados (desclassificados primeiro, pra facilitar a avaliação)
+  for (const athlete of ordenarParaRelatorio(athletes)) {
     const lastCheck = athlete.historico[athlete.historico.length - 1];
     const statusLabel =
       athlete.status === 'valido' ? 'VÁLIDO' : athlete.status === 'invalido' ? 'DESCLASSIFICADO' : 'PENDENTE';
@@ -192,7 +203,8 @@ export function openPrintReport(athletes: Athlete[], options: ReportOptions = DE
   const pendentes = athletes.length - validos - invalidos;
 
   const cols: { t: string; v: (a: Athlete) => string; center?: boolean }[] = [
-    { t: 'Nº', v: (a) => a.numero_inscricao, center: true },
+    { t: 'Nº de Peito', v: (a) => a.numero_inscricao, center: true },
+    { t: 'Situação', v: (a) => (a.status === 'valido' ? 'Válido' : a.status === 'invalido' ? 'Desclassificado' : 'Pendente'), center: true },
     { t: 'Nome', v: (a) => a.nome },
     { t: 'Categoria', v: (a) => a.categoria || '' },
     { t: 'CPF', v: (a) => a.cpf || '', center: true },
@@ -200,12 +212,11 @@ export function openPrintReport(athletes: Athlete[], options: ReportOptions = DE
     { t: 'UF', v: (a) => a.uf || '', center: true },
   ];
   if (options.incluirContato) cols.push({ t: 'Telefone', v: (a) => a.telefone || '', center: true });
-  cols.push({ t: 'Situação', v: (a) => (a.status === 'valido' ? 'Válido' : a.status === 'invalido' ? 'Desclassificado' : 'Pendente'), center: true });
   if (options.incluirObs) cols.push({ t: 'Observação', v: (a) => a.historico[a.historico.length - 1]?.observacao || '' });
   cols.push({ t: 'Operador', v: (a) => a.historico[a.historico.length - 1]?.operador || '', center: true });
 
   const th = cols.map((c) => `<th>${esc(c.t)}</th>`).join('');
-  const tr = athletes.map((a, i) => {
+  const tr = ordenarParaRelatorio(athletes).map((a, i) => {
     const cls = a.status === 'invalido' ? 'inv' : i % 2 ? 'alt' : 'row';
     return `<tr class="${cls}">${cols.map((c) => `<td class="${c.center ? 'center' : ''}${c.t === 'Situação' ? ' sit ' + a.status : ''}${c.t === 'Nome' ? ' nome' : ''}">${esc(c.v(a))}</td>`).join('')}</tr>`;
   }).join('');
