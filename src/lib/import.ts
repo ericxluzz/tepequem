@@ -36,7 +36,7 @@ export function autoDetectMapping(headers: string[]): ColumnMapping[] {
   const normalized = headers.map((h) => h.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''));
 
   const fieldAliases: Record<string, string[]> = {
-    numero_inscricao: ['numero', 'num', 'nro', 'inscricao', 'id', 'codigo', 'code', '#', 'peito', 'dorsal'],
+    numero_inscricao: ['numero', 'numeral', 'num', 'nro', 'inscricao', 'id', 'codigo', 'code', '#', 'peito', 'dorsal'],
     nome: ['nome', 'name', 'atleta', 'athlete', 'participante'],
     cpf: ['cpf', 'documento', 'doc', 'rg'],
     data_nascimento: ['nascimento', 'data_nasc', 'dtnasc', 'birthdate', 'birth', 'dob'],

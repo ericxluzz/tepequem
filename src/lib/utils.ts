@@ -63,7 +63,8 @@ export function calcAge(dataNascimento: string | undefined): number | undefined 
     birth = new Date(dataNascimento);
   }
 
-  if (isNaN(birth.getTime())) return undefined;
+  // data claramente errada na planilha (ex.: ano 0095) → não inventa uma idade absurda
+  if (isNaN(birth.getTime()) || birth.getFullYear() < 1900) return undefined;
 
   let age = raceDate.getFullYear() - birth.getFullYear();
   const m = raceDate.getMonth() - birth.getMonth();

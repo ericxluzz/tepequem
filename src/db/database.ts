@@ -1,7 +1,7 @@
 import Dexie, { type Table } from 'dexie';
 import type { Athlete } from '../types/athlete';
 import type { CheckinEvent } from '../types/sync';
-import { getSeedAthletes } from '../data/atletasSeed';
+import { getSeedAthletes, ROSTER_VERSION } from '../data/atletasSeed';
 
 export interface AppSettings {
   id?: number;
@@ -97,8 +97,10 @@ export async function setDeviceLabel(label: string): Promise<void> {
 // --- Athlete helpers ---
 
 /**
- * Na primeira vez que o app abre num aparelho (base local vazia), carrega a
- * planilha oficial embutida. O guard evita que duas chamadas simultâneas
+ * Carrega a planilha oficial embutida quando a base local está vazia, ou
+ * quando a planilha embutida mudou desde a última carga neste aparelho — aí a
+ * base e as checagens locais antigas são substituídas, porque os números de
+ * peito podem ter mudado de dono. O guard evita que duas chamadas simultâneas
  * (ex.: o StrictMode do React invocando o efeito duas vezes) dupliquem tudo.
  */
 let seedInFlight: Promise<boolean> | null = null;
@@ -107,9 +109,16 @@ export function seedIfEmpty(): Promise<boolean> {
   if (!seedInFlight) {
     seedInFlight = (async () => {
       const count = await db.athletes.count();
-      if (count > 0) return false;
+      if (count > 0 && (await getSetting('roster_version')) === ROSTER_VERSION) return false;
+      if (count > 0) {
+        await db.transaction('rw', db.athletes, db.checkin_events, async () => {
+          await db.athletes.clear();
+          await db.checkin_events.clear();
+        });
+      }
       try {
         await db.athletes.bulkAdd(getSeedAthletes());
+        await setSetting('roster_version', ROSTER_VERSION);
         return true;
       } catch (err) {
         // corrida com outra chamada concorrente semeando os mesmos dados ao

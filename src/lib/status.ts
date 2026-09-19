@@ -14,5 +14,5 @@ export function statusStyle(status: AthleteStatus): StatusStyle {
 }
 
 export function shortCategoria(c: string | undefined): string {
-  return String(c || '—').replace('Diamante ', '').replace('Masculino', 'Masc').replace('Feminino', 'Fem')
+  return String(c || '—').replace(/^diamante /i, '').replace('Masculino', 'Masc').replace('Feminino', 'Fem')
 }
